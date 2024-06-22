@@ -1,33 +1,29 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int M = sc.nextInt();
-        int nums[] = new int[N];
-        int sums[] = new int[N];
-        //배열 생성
-        for (int i = 0; i < N; i++) {
-            nums[i] = sc.nextInt();
-        }
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(bf.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+
+        long nums[] = new long[N+1]; //사람이 카운트하는 방식과 똑같이 하기 위함
         //합배열 생성
-        sums[0] = nums[0];
-        for (int i = 1; i < N; i++) {
-            sums[i] = sums[i-1] + nums[i];
+        st = new StringTokenizer(bf.readLine());
+        for (int i = 1; i <= N; i++) {
+            nums[i] = nums[i-1] + Integer.parseInt(st.nextToken());
         }
+
         //구간 합
         for (int k = 0; k < M; k++) {
-            int i = sc.nextInt()-1;
-            int j = sc.nextInt()-1;
-            if (i >= 1) {
-                System.out.println(sums[j] - sums[i-1]);
-            } else {
-                System.out.println(sums[j]);
-            }
-
+            st = new StringTokenizer(bf.readLine());
+            int i = Integer.parseInt(st.nextToken());
+            int j = Integer.parseInt(st.nextToken());
+            System.out.println(nums[j] - nums[i-1]);
         }
-        sc.close();
     }
 }
