@@ -1,8 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
 
 public class Main {
 
@@ -12,18 +11,30 @@ public class Main {
         int N = Integer.parseInt(br.readLine());
         int M = Integer.parseInt(br.readLine());
         String[] strNums = br.readLine().split(" ");
+        int[] nums = Arrays.stream(strNums).mapToInt(Integer::parseInt).toArray();
+        Arrays.sort(nums);
 
-        Set<Integer> compareSet = new HashSet<>();
+        int start = 0;
+        int end = N-1;
+        int cnt = 0;
 
-        for (int i = 0; i < N; i++) {
-            compareSet.add(M - Integer.parseInt(strNums[i]));
-            //7 2 5 8 4 6
+
+        while (start < end) {
+
+            int sum = nums[start] + nums[end];
+
+            if (sum < M) {
+                start++;
+            }
+            else if (sum == M) {
+                cnt++;
+                start++;
+            }
+            else {
+                end--;
+            }
         }
+        System.out.println(cnt);
 
-        for (int i = 0; i < N; i++) {
-            compareSet.add(Integer.parseInt(strNums[i]));
-        }
-
-        System.out.println((N*2-compareSet.size())/2);
     }
 }
