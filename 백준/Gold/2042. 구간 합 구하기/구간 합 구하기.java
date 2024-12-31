@@ -16,7 +16,7 @@ public class Main {
         int K = Integer.parseInt(st.nextToken()); //구간합을 구하는 횟수
 
         //N개의 숫자를 받아 세그먼트 트리의 리프노드로 구성
-        int k = getK(N);
+        int k = (int) Math.ceil(Math.log(N) / Math.log(2));
         int size = (int)Math.pow(2,k) * 2; //세그먼트 트리 크기
         int leaf_start = (int)Math.pow(2, k); //리프노드 시작 인덱스
 
@@ -49,9 +49,6 @@ public class Main {
         bw.flush();
         bw.close();
     }
-    private static int getK(int num) {
-        return (int) Math.ceil(Math.log(num) / Math.log(2));
-    }
     private static long find(long[] arr, int start, int end) {
         long sum = 0;
         while (end >= start) {
@@ -62,8 +59,8 @@ public class Main {
         }
         return sum;
     }
-    private static void update(long[] arr, int before, long after, int k) {
-        int num = before + (int)Math.pow(2, k) - 1;
+    private static void update(long[] arr, int beforeIndex, long after, int k) {
+        int num = beforeIndex + (int)Math.pow(2, k) - 1;
         arr[num] = after;
         while (num > 1) {
             num /= 2; // 부모 노드로 이동
