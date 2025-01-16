@@ -31,13 +31,13 @@ public class Main {
         long right = arr[arr.length - 1];
         long res = 0;
 
-        while (left <= right) {
+        while (left < right) {
             long mid = (left + right) / 2;
             if (M <= findOut(arr, mid)) { //남는 경우
                 res = mid;
                 left = mid + 1;
             } else {
-                right = mid - 1;
+                right = mid;
             }
         }
         return res;
