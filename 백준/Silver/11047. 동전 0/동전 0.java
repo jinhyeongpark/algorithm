@@ -18,11 +18,9 @@ public class Main {
             coins[i] = Integer.parseInt(br.readLine());
         }
         for (int i = 0; i < N; i++) {
-            int cnt = 0;
             if (K >= coins[i]) {
-                cnt = K / coins[i];
-                K -= cnt * coins[i];
-                res += cnt;
+                res += K / coins[i];
+                K %= coins[i];
             }
         }
         System.out.println(res);
