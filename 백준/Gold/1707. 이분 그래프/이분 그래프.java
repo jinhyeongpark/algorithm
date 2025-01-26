@@ -51,6 +51,7 @@ public class Main {
         bw.close();
     }
     private static void dfs(int node) { //dfs 메서드
+        if (check[node] == 0) return;
         for (int next : graph[node]) { //인접 리스트에 대해서
             if (check[next] == 0) { //방문 여부 확인 후
                 check[next] = -check[node];
