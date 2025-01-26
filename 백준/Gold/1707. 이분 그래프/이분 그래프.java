@@ -1,69 +1,63 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    static ArrayList<Integer>[] graph; // 그래프를 인접 리스트로 표현
-    static int[] check; // -1: 방문 안 함, 0: 색깔 0, 1: 색깔 1
-    static boolean isEven; // 이분 그래프 여부를 나타내는 플래그
+    static ArrayList<Integer>[] graph;
+    static int[] check; // 방문 여부 및 색깔 (-1, 1: 색, 0: 방문 안 함)
+    static boolean isEven;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        StringBuilder sb = new StringBuilder();
-        int K = Integer.parseInt(br.readLine()); // 테스트 케이스 수
+        int K = Integer.parseInt(br.readLine());
 
-        for (int t = 0; t < K; t++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            int V = Integer.parseInt(st.nextToken()); // 정점 수
-            int E = Integer.parseInt(st.nextToken()); // 간선 수
+        for (int i = 0; i < K; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+            int V = Integer.parseInt(st.nextToken());
+            int E = Integer.parseInt(st.nextToken());
 
-            // 그래프 초기화
-            graph = new ArrayList[V + 1];
-            for (int i = 0; i <= V; i++) {
-                graph[i] = new ArrayList<>();
+            graph = new ArrayList[V+1];
+            for (int j = 0; j <= V; j++) {
+                graph[j] = new ArrayList<>();
             }
-            check = new int[V + 1];
-            Arrays.fill(check, -1); // -1로 초기화 (아직 방문하지 않음)
+            check = new int[V+1];
             isEven = true;
 
-            // 간선 정보 입력
-            for (int i = 0; i < E; i++) {
-                st = new StringTokenizer(br.readLine());
-                int u = Integer.parseInt(st.nextToken());
-                int v = Integer.parseInt(st.nextToken());
-                graph[u].add(v);
-                graph[v].add(u);
+            for (int j = 0; j < E; j++) {
+                st = new StringTokenizer(br.readLine(), " ");
+                int start = Integer.parseInt(st.nextToken());
+                int end = Integer.parseInt(st.nextToken());
+                graph[start].add(end);
+                graph[end].add(start);
             }
 
-            // 비연결 그래프 처리
-            for (int i = 1; i <= V; i++) {
-                if (check[i] == -1 && isEven) { // 방문하지 않은 정점에서 DFS 시작
-                    dfs(i);
+            for (int j = 1; j <= V; j++) {
+                if (check[j] == 0) {
+                    check[j] = 1;
+                    dfs(j);
                 }
             }
+            if (isEven) bw.write("YES\n");
+            else bw.write("NO\n");
 
-            // 결과 저장
-            if (isEven) {
-                sb.append("YES\n");
-            } else {
-                sb.append("NO\n");
-            }
         }
-
-        bw.write(sb.toString()); // 최종 결과 출력
         bw.flush();
         bw.close();
     }
-
-    private static void dfs(int node) {
-        for (int next : graph[node]) { // 인접 정점 탐색
-            if (check[next] == -1) { // 아직 방문하지 않은 정점
-                check[next] = (check[node] + 1) % 2; // 현재 정점과 다른 색으로 색칠
-                dfs(next); // 재귀 호출
-            } else if (check[next] == check[node]) { // 인접 정점이 같은 색이면
-                isEven = false; // 이분 그래프가 아님
-                return; // 더 이상 탐색할 필요 없음
+    private static void dfs(int node) { //dfs 메서드
+        for (int next : graph[node]) { //인접 리스트에 대해서
+            if (check[next] == 0) { //방문 여부 확인 후
+                check[next] = -check[node];
+                dfs(next); //dfs호출
+            } else if (check[node] == check[next]){
+                isEven = false;
+                return;
             }
         }
     }
