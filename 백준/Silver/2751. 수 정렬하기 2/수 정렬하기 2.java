@@ -1,67 +1,79 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-
-    //merge 함수: 두 개의 정렬된 부분 배열을 합치는 함수
-    public static void merge(int[] A, int p, int q, int r) {
-        int i = p, j = q + 1, t = 0;
-        int[] tmp = new int[r - p + 1]; // 임시 배열 생성
-
-        //두 배열을 비교하며 tmp에 값을 저장
-        while (i <= q && j <= r) {
-            if (A[i] < A[j]) {
-                tmp[t++] = A[i++];
-            } else {
-                tmp[t++] = A[j++];
-            }
-        }
-        //어느 한 쪽이 빈 경우
-        //왼쪽 배열에 남은 값을 모두 tmp에 복사
-        while (i <= q) {
-            tmp[t++] = A[i++];
-        }
-
-        //오른쪽 배열에 남은 값을 모두 tmp에 복사
-        while (j <= r) {
-            tmp[t++] = A[j++];
-        }
-
-        //tmp 배열의 값을 A[p..r]에 복사
-        t = 0;
-        for (i = p; i <= r; i++) {
-            A[i] = tmp[t++];
-        }
-    }
-
-    // mergeSort 함수: 배열을 재귀적으로 분할하고 병합하는 함수
-    public static void mergeSort(int[] A, int p, int r) {
-        if (p < r) {
-            int q = (p + r) / 2; // 중간 인덱스 계산
-            mergeSort(A, p, q);   // 왼쪽 부분 배열 정렬
-            mergeSort(A, q + 1, r); // 오른쪽 부분 배열 정렬
-            merge(A, p, q, r); // 두 부분 배열을 병합
-        }
-    }
-
     public static void main(String[] args) throws IOException {
+        // 입출력 준비
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine()); //수의 갯수 N 입력받기
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-        int[] arr = new int[N]; //N크기의 배열 생성
+        int N = Integer.parseInt(br.readLine());
+        List<Integer> negList = new ArrayList<>(N);
+        List<Integer> posList = new ArrayList<>(N);
 
+        // 1) 입력을 받으면서 음수/양수 분리 (음수는 절댓값으로 저장)
         for (int i = 0; i < N; i++) {
-            arr[i] = Integer.parseInt(br.readLine()); //N개의 수 입력받기
+            int x = Integer.parseInt(br.readLine());
+            if (x < 0) negList.add(-x);
+            else       posList.add(x);
         }
 
-        //병합 정렬 실행
-        //배열, 시작 인덱스, 끝 인덱스를 매개변수로
-        mergeSort(arr, 0, arr.length-1);
+        // 2) 리스트를 배열로 변환
+        int[] neg = negList.stream().mapToInt(Integer::intValue).toArray();
+        int[] pos = posList.stream().mapToInt(Integer::intValue).toArray();
 
-        //출력
-        for (int i = 0; i < N; i++) {
-            System.out.println(arr[i]);
+        // 3) 절댓값 기준으로 Radix Sort 적용
+        radixSort(neg);
+        radixSort(pos);
+
+        // 4) 음수 부분은 정렬된 절댓값 배열을 뒤집어서 실제 음수로 복원하며 출력
+        for (int i = neg.length - 1; i >= 0; i--) {
+            bw.write(String.valueOf(-neg[i]));
+            bw.newLine();
+        }
+        // 5) 양수 부분은 정순 그대로 출력
+        for (int v : pos) {
+            bw.write(String.valueOf(v));
+            bw.newLine();
+        }
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    // Radix Sort: 10진수 기반, O(n·k)
+    static void radixSort(int[] arr) {
+        if (arr.length == 0) return;
+
+        // 1) 최댓값 찾아서 자릿수 수 계산
+        int max = Arrays.stream(arr).max().getAsInt();
+        int exp = 1;  // 1의 자리, 10의 자리, 100의 자리, ...
+
+        int[] buf = new int[arr.length];
+
+        // 2) 각 자릿수별로 안정 정렬 수행
+        while (max / exp > 0) {
+            int[] count = new int[10];
+
+            // (a) 해당 자릿수 숫자별 개수 세기
+            for (int v : arr) {
+                int digit = (v / exp) % 10;
+                count[digit]++;
+            }
+            // (b) 누적합으로 위치 계산
+            for (int i = 1; i < 10; i++) {
+                count[i] += count[i - 1];
+            }
+            // (c) 뒤에서부터 버킷에 맞춰 복사 (안정 정렬)
+            for (int i = arr.length - 1; i >= 0; i--) {
+                int digit = (arr[i] / exp) % 10;
+                buf[--count[digit]] = arr[i];
+            }
+            // (d) 임시 버퍼를 원본으로 복사
+            System.arraycopy(buf, 0, arr, 0, arr.length);
+
+            exp *= 10;  // 다음 자릿수로 이동
         }
     }
 }
