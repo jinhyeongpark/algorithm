@@ -1,5 +1,8 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Main {
 
@@ -17,6 +20,7 @@ public class Main {
         for (int i = 1; i < N+1; i++) {
             pc[i] = new ArrayList<>();
         }
+
         StringTokenizer st;
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine(), " ");
@@ -27,23 +31,18 @@ public class Main {
         }
 
         visited[1] = true;
-        bfs(1);
-
+        dfs(1);
 
         System.out.println(cnt);
     }
-    private static void bfs(int num) throws IOException {
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(num);
+    private static void dfs(int i) {
+        visited[i] = true;
 
-        while (!queue.isEmpty()) {
-            int now = queue.poll();
-            for (int n : pc[now]) {
-                if (!visited[n]) {
-                    cnt++;
-                    visited[n] = true;
-                    queue.add(n);
-                }
+        for (int n : pc[i]) {
+            if (!visited[n]) {
+                visited[n] = true;
+                cnt++;
+                dfs(n);
             }
         }
     }
