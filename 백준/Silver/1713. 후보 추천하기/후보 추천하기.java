@@ -7,13 +7,20 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static class Student {
+    static class Student implements Comparable<Student> {
         int id, recommended, order;
 
         Student(int id, int order) {
             this.id = id;
             this.recommended = 1; // 등록과 동시에 추천 1회
             this.order = order;
+        }
+
+        @Override
+        public int compareTo(Student o) {
+            int res = Integer.compare(this.recommended, o.recommended);
+            if (res == 0) return Integer.compare(this.order, o.order);
+            return res;
         }
     }
 
@@ -40,11 +47,7 @@ public class Main {
                 target.recommended++;
             } else {
                 if (frames.size() == N) {
-                    Collections.sort(frames, (s1, s2) -> {
-                        if (s1.recommended == s2.recommended) {
-                            return s1.order - s2.order;
-                        } return s1.recommended - s2.recommended;
-                    });
+                    Collections.sort(frames);
                     frames.remove(0);
                 }
                 frames.add(new Student(id, i));
@@ -56,4 +59,3 @@ public class Main {
         System.out.println(sb);
     }
 }
-
