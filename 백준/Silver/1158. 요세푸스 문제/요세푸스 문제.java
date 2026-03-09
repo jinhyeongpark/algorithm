@@ -21,20 +21,15 @@ public class Main {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<");
-
-        int cnt = 1;
+        
         while (!queue.isEmpty()) {
-            int target = queue.poll();
-            if (cnt % K == 0) {
-                sb.append(target);
-                if (!queue.isEmpty()) {
-                    sb.append(", ");
-                }
-                cnt = 0;
-            } else {
-                queue.add(target);
+            for (int i = 0; i < K-1; i++) {
+                queue.add(queue.poll());
             }
-            cnt++;
+            sb.append(queue.poll());
+            if (!queue.isEmpty()) {
+                sb.append(", ");
+            }
         }
         System.out.println(sb.append(">"));
     }
