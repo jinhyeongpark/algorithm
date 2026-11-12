@@ -24,12 +24,8 @@ class Solution
                 }
             }
         } else {
-            for (int i = 0; i < col; i++) {
-                if (i < row) {
-                    answer[i] = arr[i];
-                } else {
-                    answer[i] = new int[col];
-                }
+            for (int i = 0; i < row; i++) {
+                answer[i] = arr[i];
             }
         }
         return answer;
